@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
- 
-namespace TelefonRehberi
+
+namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
@@ -21,75 +21,74 @@ namespace TelefonRehberi
         SqlCommand cmd;
         SqlDataAdapter adapter;
         DataTable tablo;
- 
+
         void KisiGetir()
         {
-            conn=new SqlConnection("Data Source=.;Initial Catalog=dbRehber;Integrated Security=True");
-            adapter=new SqlDataAdapter("SELECT *FROM Kisiler",conn);
+            conn = new SqlConnection("Data Source=.;Initial Catalog=dbRehber;Integrated Security=True");
+            adapter = new SqlDataAdapter("Select *FROM Kisiler1", conn);
             tablo = new DataTable();
             conn.Open();
             adapter.Fill(tablo);
-            dgvKisiler.DataSource=tablo;
+            dgvKisiler.DataSource = tablo;
             conn.Close();
         }
- 
+
         private void Form1_Load(object sender, EventArgs e)
         {
             KisiGetir();
         }
- 
+
         private void btnKaydet_Click(object sender, EventArgs e)
         {
-            string sorgu = "Insert into Kisiler (Ad,Soyad,Telefon) values (@ad,@soyad,@tel)";
+            string sorgu = "Insert into Kisiler1 (Id,Ad,Soyad,Telefon) values (@ıd,@ad,@soyad,@tel)";
             cmd = new SqlCommand(sorgu, conn);
             cmd.Parameters.AddWithValue("@ad", txtAd.Text);
             cmd.Parameters.AddWithValue("@soyad", txtSoyad.Text);
             cmd.Parameters.AddWithValue("@tel", txtTelefon.Text);
+            cmd.Parameters.AddWithValue("@ıd", textBox1.Text);
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
             KisiGetir();
         }
- 
+
         private void btnGüncelle_Click(object sender, EventArgs e)
         {
-            string sorgu = "Update Kisiler Set ad=@Ad,soyad=@Soyad,Telefon=@tel Where Id=@id";
+            string sorgu = "Update Kisiler1 Set ad=@Ad,soyad=@Soyad,Telefon=@tel Where Id=@ıd";
             cmd = new SqlCommand(sorgu, conn);
             cmd.Parameters.AddWithValue("@ad", txtAd.Text);
             cmd.Parameters.AddWithValue("@soyad", txtSoyad.Text);
             cmd.Parameters.AddWithValue("@tel", txtTelefon.Text);
-            cmd.Parameters.AddWithValue("@id",dgvKisiler.CurrentRow.Cells[0].Value);
+            cmd.Parameters.AddWithValue("@ıd", dgvKisiler.CurrentRow.Cells[0].Value);
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
             KisiGetir();
- 
         }
- 
+
         private void btnSil_Click(object sender, EventArgs e)
         {
-            string sorgu = "DELETE Kisiler Where Id=@id";
+            string sorgu = "DELETE Kisiler1 Where Id=@ıd";
             cmd = new SqlCommand(sorgu, conn);
-            cmd.Parameters.AddWithValue("@id", dgvKisiler.CurrentRow.Cells[0].Value);
+            cmd.Parameters.AddWithValue("@ıd", dgvKisiler.CurrentRow.Cells[0].Value);
             conn.Open();
             cmd.ExecuteNonQuery();
             conn.Close();
             KisiGetir();
         }
- 
-        private void dgvKisiler_CellEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            txtAd.Text =dgvKisiler.CurrentRow.Cells[1].Value.ToString();
-            txtSoyad.Text =dgvKisiler.CurrentRow.Cells[2].Value.ToString();
-            txtTelefon.Text =dgvKisiler.CurrentRow.Cells[3].Value.ToString();
-        }
- 
-        private void btnAra_Click(object sender, EventArgs e)
+
+        private void BtnAra_Click(object sender, EventArgs e)
         {
             DataView dv = tablo.DefaultView;
-            dv.RowFilter = "Ad Like '" + txtAra.Text + "%'";
+            dv.RowFilter = "Ad Like'" + txtAra.Text + "%'";
             dgvKisiler.DataSource = dv;
         }
- 
+
+        private void dgvKisiler_DragEnter(object sender, DragEventArgs e)
+        {
+            txtAd.Text = dgvKisiler.CurrentRow.Cells[1].Value.ToString();
+            txtSoyad.Text = dgvKisiler.CurrentRow.Cells[2].Value.ToString();
+            txtTelefon.Text = dgvKisiler.CurrentRow.Cells[3].Value.ToString();
+        }
     }
 }
